@@ -8,7 +8,7 @@
   <h1>Moroccan cities</h1>
   <ul>
     {% for name, population in cities.items %}
-      <li><a href="/api/cities/{{ name }}/">{{ name|title }}</a> : {{ population }} inhabitants</li>
+      <li><a href={% url 'city-details' name %}>{{ name|title }}</a> : {{ population }} inhabitants</li>
     {% endfor %}
   </ul>
   <p><strong>Total:</strong> {{ total }}</p>
