@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Moroccan cities</title>
+</head>
+<body>
+  <h1>Moroccan cities</h1>
+  <ul>
+    {% for name, population in cities.items %}
+      <li><a href="/api/cities/{{ name }}/">{{ name|title }}</a> : {{ population }} inhabitants</li>
+    {% endfor %}
+  </ul>
+  <p><strong>Total:</strong> {{ total }}</p>
+</body>
+</html>
