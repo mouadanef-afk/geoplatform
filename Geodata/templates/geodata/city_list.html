@@ -1,16 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Moroccan cities</title>
-</head>
-<body>
-  <h1>Moroccan cities</h1>
-  <ul>
-    {% for name, population in cities.items %}
-      <li><a href={% url 'city-details' name %}>{{ name|title }}</a> : {{ population }} inhabitants</li>
-    {% endfor %}
-  </ul>
-  <p><strong>Total:</strong> {{ total }}</p>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Moroccan cities</title>
+  </head>
+  <body>
+    <h1>Moroccan cities</h1>
+    <ul>
+      {% for city in cities %}
+      <li>
+        <a href="{% url 'city-details' city.slug %}">{{ city.name }}</a>
+        ({{ city.region }}) : {{ city.population|default:"unknown" }}
+        inhabitants
+      </li>
+      {% empty %}
+      <li>No cities yet. Add some in the admin panel.</li>
+      {% endfor %}
+    </ul>
+    <p><strong>Total population:</strong> {{ total|default:0 }}</p>
+  </body>
 </html>

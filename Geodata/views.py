@@ -1,32 +1,38 @@
+from django.db.models import Sum
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from django.http import Http404
+from django.shortcuts import get_object_or_404, render
 
-CITIES = {"rabat": 577827, "casablanca": 3359818, "fes": 1112072}
+from .models import City
 
 
 def home(request):
     return HttpResponse("<h1>Hello from Django!</h1>")
 
 
-def city_list_api(request):
-    return JsonResponse(CITIES)
-
-def city_details(request, name):
-    name = name.lower()
-    if name in CITIES:
-        context = {"name":name, "population": CITIES[name]}
-        return render(request, "geodata/city_details.html", context)
-    raise Http404("City not found")   
-
-
-def city_detail_api(request, name):
-    name = name.lower()
-    if name in CITIES:
-        return JsonResponse({"name": name, "population": CITIES[name]})
-    return JsonResponse({"error": "City not found"}, status=404)
-
-
 def city_list_page(request):
-    context = {"cities": CITIES, "total": sum(CITIES.values())}
-    return render(request, "geodata/city_list.html", context)
+    cities = City.objects.select_related("region")
+    total = cities.aggregate(total=Sum("population"))["total"]
+    return render(request, "geodata/city_list.html", {"cities": cities, "total": total})
+
+
+def city_detail(request, slug):
+    city = get_object_or_404(City.objects.select_related("region"), slug=slug)
+    return render(request, "geodata/city_details.html", {"city": city})
+
+
+def city_list_api(request):
+    data = list(City.objects.values("name", "slug", "region__name", "population"))
+    return JsonResponse(data, safe=False)
+
+
+def city_detail_api(request, slug):
+    city = City.objects.filter(slug=slug).select_related("region").first()
+    if city is None:
+        return JsonResponse({"error": "City not found"}, status=404)
+    return JsonResponse({
+        "name": city.name,
+        "region": city.region.name,
+        "population": city.population,
+        "area_km2": city.area_km2,
+        "density": city.density,
+    })

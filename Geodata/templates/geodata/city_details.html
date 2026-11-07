@@ -1,20 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>{{name}}</title>
-</head>
-<body>
-
-  <ul>
-    <h1>{{name}}</h1>
-    <li><strong>{{population}}</strong></li>
-    {% if population > 1000000 %}
-      <li>Big City </li>
-    {% else %}
-        <li>Medium City </li> 
-    {% endif %}
-  </ul>
- 
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ city.name }}</title>
+  </head>
+  <body>
+    <h1>{{ city.name }}</h1>
+    <ul>
+      <li>Region: {{ city.region }}</li>
+      <li>
+        Population: <strong>{{ city.population|default:"unknown" }}</strong>
+      </li>
+      <li>Area: {{ city.area_km2 }} km²</li>
+      <li>Density: {{ city.density|default:"unknown" }} inhabitants/km²</li>
+      {% if city.population > 1000000 %}
+      <li>🏙️ Big city</li>
+      {% elif city.population %}
+      <li>🏘️ Medium city</li>
+      {% endif %}
+    </ul>
+    <a href="{% url 'city-list' %}">← Back to all cities</a>
+  </body>
 </html>
